@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import 'leaflet/dist/leaflet.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+:root {
+  --background: #0A0E1A;
+  --surface: #111827;
+  --foreground: #E2E8F0;
+  --muted: #64748B;
+  --accent-cyan: #00E5FF;
+  --accent-red: #FF4444;
+  --accent-green: #00C853;
+}
+
+body {
+  background-color: #0A0E1A;
+  color: #E2E8F0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+/* Custom Tactical Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0E1A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1E293B;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00E5FF88;
+}
+
+/* Tactical HUD Grid Overlay */
+.hud-grid {
+  background-size: 30px 30px;
+  background-image: 
+    linear-gradient(to right, rgba(0, 229, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 229, 255, 0.025) 1px, transparent 1px);
+}
+
+/* Camera scanline effect */
+.cctv-scanline {
+  background: linear-gradient(
+    rgba(10, 14, 26, 0) 50%, 
+    rgba(0, 0, 0, 0.45) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+}
+
+/* Camera animated moving scan line */
+.scan-bar {
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.6), transparent);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.8);
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: scan-move 4s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes scan-move {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(180px); opacity: 0; }
+}
+
+/* Blinking Alert Overlay */
+@keyframes alertPulse {
+  0%, 100% {
+    opacity: 0.95;
+    background-color: rgba(255, 68, 68, 0.22);
+    border-color: rgba(255, 68, 68, 0.9);
+  }
+  50% {
+    opacity: 0.35;
+    background-color: rgba(255, 68, 68, 0.06);
+    border-color: rgba(255, 68, 68, 0.3);
+  }
+}
+
+.animate-alert-banner {
+  animation: alertPulse 1.4s infinite ease-in-out;
+}
+
+/* Continuous Marquee Animation */
+@keyframes continuousScroll {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee-scroll {
+  display: flex;
+  width: max-content;
+  animation: continuousScroll 40s linear infinite;
+}
+
+.animate-marquee-scroll:hover {
+  animation-play-state: paused;
+}
+
+/* Glowing text and borders */
+.glow-cyan {
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+}
+
+.glow-red {
+  text-shadow: 0 0 10px rgba(255, 68, 68, 0.7);
+}
+
+.glow-green {
+  text-shadow: 0 0 10px rgba(0, 200, 83, 0.7);
+}
+
+.border-glow-cyan {
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.25);
+  border-color: #00E5FF;
+}
+
+.border-glow-red {
+  box-shadow: 0 0 14px rgba(255, 68, 68, 0.35);
+  border-color: #FF4444;
+}
+

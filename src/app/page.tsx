@@ -25,6 +25,10 @@ import {
   X,
   RefreshCw,
   Sliders,
+  Globe,
+  Camera as CameraIcon,
+  ExternalLink,
+  VideoOff,
   LogOut,
   Bell,
   Eye,
@@ -88,7 +92,7 @@ type NavigationTab =
   | 'blockchain'
   | 'status';
 
-type ZoneName = 'Alpha' | 'Bravo' | 'Charlie' | 'Delta' | 'Echo';
+type ZoneName = 'Alpha' | 'Bravo' | 'Charlie' | 'Delta' | 'Echo' | 'Global-USA';
 
 interface CameraItem {
   id: string;
@@ -102,6 +106,11 @@ interface CameraItem {
   aiModel: string;
   lastSeen: string;
   uptime: string;
+  videoSrc?: string;
+  earthCamUrl?: string;
+  sourceProvider?: 'EarthCam USA' | 'IBVAP Defense Edge';
+  country?: string;
+  city?: string;
 }
 
 interface BlockchainBlock {
@@ -148,20 +157,95 @@ function HsrpPlateBadge({ plateNumber }: { plateNumber: string }) {
 }
 
 /* =========================================================================
-   STATIC BASE CAMERAS (48 TOTAL)
+   STATIC BASE CAMERAS (EARTHCAM USA + INDO-BANGLADESH BORDER DEFENSE)
    ========================================================================= */
 
 const BASE_CAMERAS: CameraItem[] = [
-  { id: 'CAM-001', location: 'Petrapole ICP Checkpoint', zone: 'Charlie', lat: 23.017, lon: 88.917, status: 'Online', resolution: '4K Ultra HD', fps: 30.0, aiModel: 'ANPR-Edge-IND', lastSeen: 'Just now', uptime: '99.9%' },
-  { id: 'CAM-002', location: 'Hilli Border Outpost Fence', zone: 'Bravo', lat: 25.283, lon: 89.000, status: 'Degraded', resolution: '1080p 60FPS', fps: 22.4, aiModel: 'ThermalNet-v3', lastSeen: '1m ago', uptime: '97.2%' },
-  { id: 'CAM-003', location: 'Changrabandha Corridor', zone: 'Bravo', lat: 26.317, lon: 89.617, status: 'Online', resolution: '4K Ultra HD', fps: 30.0, aiModel: 'YOLO-v9-BorderSec', lastSeen: 'Just now', uptime: '99.8%' },
-  { id: 'CAM-004', location: 'Fulbari Riverine Sentry', zone: 'Alpha', lat: 26.550, lon: 88.733, status: 'Online', resolution: '1080p 60FPS', fps: 29.8, aiModel: 'DeepFlow-Water', lastSeen: 'Just now', uptime: '99.9%' },
-  { id: 'CAM-005', location: 'Ghojadanga Border Culvert', zone: 'Delta', lat: 22.900, lon: 88.783, status: 'Online', resolution: '1080p 60FPS', fps: 30.0, aiModel: 'YOLO-v9-BorderSec', lastSeen: 'Just now', uptime: '99.5%' },
-  { id: 'CAM-012', location: 'Panitanki ICP Gate 1', zone: 'Charlie', lat: 26.712, lon: 88.261, status: 'Online', resolution: '4K Ultra HD', fps: 30.0, aiModel: 'ANPR-Edge-IND', lastSeen: 'Just now', uptime: '100%' },
-  { id: 'CAM-019', location: 'Mechi River Sandbar Crossing', zone: 'Alpha', lat: 26.685, lon: 88.192, status: 'Online', resolution: '1080p 60FPS', fps: 29.8, aiModel: 'ThermalNet-v3', lastSeen: 'Just now', uptime: '99.7%' },
-  { id: 'CAM-027', location: 'Patrol Road East Junction', zone: 'Delta', lat: 26.660, lon: 88.290, status: 'Online', resolution: '1080p 60FPS', fps: 30.0, aiModel: 'YOLO-v9-BorderSec', lastSeen: 'Just now', uptime: '99.9%' },
-  { id: 'CAM-034', location: 'Tea Estate Perimeter Line East', zone: 'Delta', lat: 26.640, lon: 88.310, status: 'Online', resolution: '1080p 60FPS', fps: 30.0, aiModel: 'YOLO-v9-BorderSec', lastSeen: 'Just now', uptime: '99.7%' },
-  { id: 'CAM-041', location: 'Nathu La High Pass Watchtower', zone: 'Echo', lat: 27.386, lon: 88.831, status: 'Online', resolution: '4K Ultra HD', fps: 30.0, aiModel: 'LongRange-Optic-v4', lastSeen: 'Just now', uptime: '99.9%' },
+  // --- EARTHCAM LIVE FEEDS (UNITED STATES) ---
+  {
+    id: 'CAM-USA-01',
+    location: 'Times Square, USA',
+    zone: 'Global-USA',
+    lat: 40.7580,
+    lon: -73.9855,
+    status: 'Online',
+    resolution: '4K Ultra HD',
+    fps: 30.0,
+    aiModel: 'EarthCam-CrowdFlow-AI',
+    lastSeen: 'Live Now',
+    uptime: '99.99%',
+    videoSrc: '/videos/cam-001.mp4',
+    earthCamUrl: 'https://www.earthcam.com/usa/newyork/timessquare/?cam=tsstreet',
+    sourceProvider: 'EarthCam USA',
+    country: 'USA',
+    city: 'Times Square, New York'
+  },
+  {
+    id: 'CAM-USA-02',
+    location: 'Texas, USA',
+    zone: 'Global-USA',
+    lat: 32.7767,
+    lon: -96.7970,
+    status: 'Online',
+    resolution: '1080p 60FPS',
+    fps: 29.9,
+    aiModel: 'YOLO-v9-HighwaySec',
+    lastSeen: 'Live Now',
+    uptime: '99.95%',
+    videoSrc: '/videos/cam-002.mp4',
+    earthCamUrl: 'https://www.earthcam.com/usa/texas/dallas/dealeyplaza/?cam=dealeyplaza',
+    sourceProvider: 'EarthCam USA',
+    country: 'USA',
+    city: 'Dallas / Frontier, Texas'
+  },
+  {
+    id: 'CAM-USA-03',
+    location: 'Las Vegas, USA',
+    zone: 'Global-USA',
+    lat: 36.1699,
+    lon: -115.1398,
+    status: 'Online',
+    resolution: '4K Ultra HD',
+    fps: 30.0,
+    aiModel: 'ThermalNet-Urban-v2',
+    lastSeen: 'Live Now',
+    uptime: '99.98%',
+    videoSrc: '/videos/cam-003.mp4',
+    earthCamUrl: 'https://www.earthcam.com/usa/nevada/lasvegas/index.php?cam=catsmeow_fremont',
+    sourceProvider: 'EarthCam USA',
+    country: 'USA',
+    city: 'The Strip / Fremont St, Nevada'
+  },
+  {
+    id: 'CAM-USA-04',
+    location: 'New York, USA',
+    zone: 'Global-USA',
+    lat: 40.7128,
+    lon: -74.0060,
+    status: 'Online',
+    resolution: '4K Ultra HD',
+    fps: 30.0,
+    aiModel: 'DeepMaritime-Optic',
+    lastSeen: 'Live Now',
+    uptime: '99.97%',
+    videoSrc: '/videos/cam-004.mp4',
+    earthCamUrl: 'https://www.earthcam.com/usa/newyork/skyline/?cam=skyline_g',
+    sourceProvider: 'EarthCam USA',
+    country: 'USA',
+    city: 'Midtown Skyline / Harbor, New York'
+  },
+
+  // --- INDIA BORDER DEFENSE NODES ---
+  { id: 'CAM-001', location: 'Petrapole ICP Checkpoint', zone: 'Charlie', lat: 23.017, lon: 88.917, status: 'Online', resolution: '4K Ultra HD', fps: 30.0, aiModel: 'ANPR-Edge-IND', lastSeen: 'Just now', uptime: '99.9%', videoSrc: '/videos/cam-005.mp4', sourceProvider: 'IBVAP Defense Edge', country: 'India', city: 'Petrapole, West Bengal' },
+  { id: 'CAM-002', location: 'Hilli Border Outpost Fence', zone: 'Bravo', lat: 25.283, lon: 89.000, status: 'Degraded', resolution: '1080p 60FPS', fps: 22.4, aiModel: 'ThermalNet-v3', lastSeen: '1m ago', uptime: '97.2%', videoSrc: '/videos/cam-012.mp4', sourceProvider: 'IBVAP Defense Edge', country: 'India', city: 'Hilli, West Bengal' },
+  { id: 'CAM-003', location: 'Changrabandha Corridor', zone: 'Bravo', lat: 26.317, lon: 89.617, status: 'Online', resolution: '4K Ultra HD', fps: 30.0, aiModel: 'YOLO-v9-BorderSec', lastSeen: 'Just now', uptime: '99.8%', videoSrc: '/videos/cam-001.mp4', sourceProvider: 'IBVAP Defense Edge', country: 'India', city: 'Changrabandha, Cooch Behar' },
+  { id: 'CAM-004', location: 'Fulbari Riverine Sentry', zone: 'Alpha', lat: 26.550, lon: 88.733, status: 'Online', resolution: '1080p 60FPS', fps: 29.8, aiModel: 'DeepFlow-Water', lastSeen: 'Just now', uptime: '99.9%', videoSrc: '/videos/cam-002.mp4', sourceProvider: 'IBVAP Defense Edge', country: 'India', city: 'Fulbari, Jalpaiguri' },
+  { id: 'CAM-005', location: 'Ghojadanga Border Culvert', zone: 'Delta', lat: 22.900, lon: 88.783, status: 'Online', resolution: '1080p 60FPS', fps: 30.0, aiModel: 'YOLO-v9-BorderSec', lastSeen: 'Just now', uptime: '99.5%', videoSrc: '/videos/cam-003.mp4', sourceProvider: 'IBVAP Defense Edge', country: 'India', city: 'Ghojadanga, North 24 Parganas' },
+  { id: 'CAM-012', location: 'Panitanki ICP Gate 1', zone: 'Charlie', lat: 26.712, lon: 88.261, status: 'Online', resolution: '4K Ultra HD', fps: 30.0, aiModel: 'ANPR-Edge-IND', lastSeen: 'Just now', uptime: '100%', videoSrc: '/videos/cam-004.mp4', sourceProvider: 'IBVAP Defense Edge', country: 'India', city: 'Panitanki, Darjeeling' },
+  { id: 'CAM-019', location: 'Mechi River Sandbar Crossing', zone: 'Alpha', lat: 26.685, lon: 88.192, status: 'Online', resolution: '1080p 60FPS', fps: 29.8, aiModel: 'ThermalNet-v3', lastSeen: 'Just now', uptime: '99.7%', videoSrc: '/videos/cam-005.mp4', sourceProvider: 'IBVAP Defense Edge', country: 'India', city: 'Mechi River' },
+  { id: 'CAM-027', location: 'Patrol Road East Junction', zone: 'Delta', lat: 26.660, lon: 88.290, status: 'Online', resolution: '1080p 60FPS', fps: 30.0, aiModel: 'YOLO-v9-BorderSec', lastSeen: 'Just now', uptime: '99.9%', videoSrc: '/videos/cam-012.mp4', sourceProvider: 'IBVAP Defense Edge', country: 'India', city: 'Patrol Road' },
+  { id: 'CAM-034', location: 'Tea Estate Perimeter Line East', zone: 'Delta', lat: 26.640, lon: 88.310, status: 'Online', resolution: '1080p 60FPS', fps: 30.0, aiModel: 'YOLO-v9-BorderSec', lastSeen: 'Just now', uptime: '99.7%', videoSrc: '/videos/cam-001.mp4', sourceProvider: 'IBVAP Defense Edge', country: 'India', city: 'Tea Estate' },
+  { id: 'CAM-041', location: 'Nathu La High Pass Watchtower', zone: 'Echo', lat: 27.386, lon: 88.831, status: 'Online', resolution: '4K Ultra HD', fps: 30.0, aiModel: 'LongRange-Optic-v4', lastSeen: 'Just now', uptime: '99.9%', videoSrc: '/videos/cam-002.mp4', sourceProvider: 'IBVAP Defense Edge', country: 'India', city: 'Nathu La' },
 ];
 
 // Helper to generate SHA-256 using browser Web Crypto API
@@ -929,7 +1013,7 @@ function CommandOverviewPage({
 }
 
 /* =========================================================================
-   PAGE 2: LIVE FEED MONITOR
+   PAGE 2: LIVE FEED MONITOR (EARTHCAM USA + BORDER DEFENSE)
    ========================================================================= */
 
 function LiveFeedsPage({
@@ -943,28 +1027,260 @@ function LiveFeedsPage({
   cameraStatuses: Record<string, { fps: number; status: string }>;
   onInspectCamera: (cam: CameraItem) => void;
 }) {
-  const primeFeeds = cameras.slice(0, 6);
+  const [categoryFilter, setCategoryFilter] = useState<'ALL' | 'EARTHCAM' | 'INDIA'>('ALL');
+  const [visionMode, setVisionMode] = useState<'optical' | 'thermal' | 'night' | 'tensor'>('optical');
+  const [earthCamViewMode, setEarthCamViewMode] = useState<Record<string, 'video' | 'embed'>>({});
+  
+  // Local Webcam Sentry Integration
+  const [webcamActive, setWebcamActive] = useState<boolean>(false);
+  const [webcamError, setWebcamError] = useState<string | null>(null);
+  const webcamVideoRef = useRef<HTMLVideoElement | null>(null);
+  const webcamStreamRef = useRef<MediaStream | null>(null);
+
+  const startWebcam = async () => {
+    try {
+      setWebcamError(null);
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: false,
+      });
+      webcamStreamRef.current = stream;
+      if (webcamVideoRef.current) {
+        webcamVideoRef.current.srcObject = stream;
+      }
+      setWebcamActive(true);
+    } catch (err: any) {
+      console.error('Webcam access error:', err);
+      setWebcamError('Camera access denied or unavailable.');
+      setWebcamActive(false);
+    }
+  };
+
+  const stopWebcam = () => {
+    if (webcamStreamRef.current) {
+      webcamStreamRef.current.getTracks().forEach((track) => track.stop());
+      webcamStreamRef.current = null;
+    }
+    if (webcamVideoRef.current) {
+      webcamVideoRef.current.srcObject = null;
+    }
+    setWebcamActive(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (webcamStreamRef.current) {
+        webcamStreamRef.current.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, []);
+
+  const getVisionFilterStyle = (mode: 'optical' | 'thermal' | 'night' | 'tensor') => {
+    switch (mode) {
+      case 'thermal':
+        return 'hue-rotate(180deg) saturate(2.5) contrast(1.4)';
+      case 'night':
+        return 'sepia(1) hue-rotate(85deg) saturate(3) brightness(1.2) contrast(1.2)';
+      case 'tensor':
+        return 'contrast(2) grayscale(1) invert(0.15)';
+      default:
+        return 'none';
+    }
+  };
+
+  // Filter cameras based on category
+  const filteredCameras = useMemo(() => {
+    if (categoryFilter === 'EARTHCAM') {
+      return cameras.filter((c) => c.sourceProvider === 'EarthCam USA' || c.zone === 'Global-USA');
+    }
+    if (categoryFilter === 'INDIA') {
+      return cameras.filter((c) => c.sourceProvider !== 'EarthCam USA' && c.zone !== 'Global-USA');
+    }
+    return cameras;
+  }, [cameras, categoryFilter]);
+
+  const toggleEarthCamMode = (camId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEarthCamViewMode((prev) => ({
+      ...prev,
+      [camId]: prev[camId] === 'embed' ? 'video' : 'embed',
+    }));
+  };
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#1E3A5F]">
+      {/* Top Banner & Telemetry Bar */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-[#1E3A5F]">
         <div>
-          <h1 className="text-lg font-bold text-white tracking-wide flex items-center gap-2">
-            <span>Live Feed Monitor (Edge Video Analytics)</span>
-            <span className="text-[11px] font-mono text-[#00E5FF] bg-[#00E5FF]/10 px-2 py-0.5 rounded border border-[#00E5FF]/30">
-              6 ACTIVE CCTV NODES
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <h1 className="text-lg font-bold text-white tracking-wide flex items-center gap-2">
+              <Video className="w-5 h-5 text-[#00E5FF] animate-pulse" />
+              <span>Live Surveillance Grid & EarthCam Global Sentries</span>
+            </h1>
+            <span className="text-[11px] font-mono text-[#00E5FF] bg-[#00E5FF]/10 px-2 py-0.5 rounded border border-[#00E5FF]/30 flex items-center gap-1">
+              <Globe className="w-3 h-3 text-[#00E5FF]" /> 4 EARTHCAM USA FEEDS
             </span>
-          </h1>
-          <p className="text-xs text-[#64748B] mt-0.5">
-            Simulated optical/thermal streams with live WebSocket FPS telemetry and bounding box overlays.
+            <span className="text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">
+              10 BORDER DEFENSE NODES
+            </span>
+          </div>
+          <p className="text-xs text-[#64748B] mt-1">
+            Real-time HD feeds from <span className="text-cyan-400 font-semibold">EarthCam USA (Times Square, Texas, Las Vegas, New York)</span> alongside Indo-Bangladesh border radar optical channels with edge AI inference.
           </p>
+        </div>
+
+        {/* Global Feeds Quick Actions */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => (webcamActive ? stopWebcam() : startWebcam())}
+            className={`px-3 py-1.5 rounded text-xs font-mono font-semibold flex items-center gap-1.5 border transition-all ${
+              webcamActive
+                ? 'bg-rose-500/20 text-rose-300 border-rose-500/50 shadow-[0_0_10px_rgba(255,68,68,0.3)]'
+                : 'bg-[#111827] text-cyan-300 border-[#1E3A5F] hover:border-[#00E5FF]'
+            }`}
+          >
+            {webcamActive ? <VideoOff className="w-3.5 h-3.5" /> : <CameraIcon className="w-3.5 h-3.5" />}
+            <span>{webcamActive ? 'Disconnect Local Sentry' : 'Connect Laptop Webcam Sentry'}</span>
+          </button>
         </div>
       </div>
 
+      {webcamError && (
+        <div className="p-2.5 rounded bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center justify-between">
+          <span>{webcamError}</span>
+          <button onClick={() => setWebcamError(null)} className="text-rose-400 hover:text-white">✕</button>
+        </div>
+      )}
+
+      {/* Filter & Vision Mode Control Hub */}
+      <div className="p-3 rounded bg-[#111827] border border-[#1E3A5F] flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-md">
+        {/* Category Filters */}
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-xs font-mono text-[#64748B] mr-1 flex items-center gap-1">
+            <Filter className="w-3 h-3" /> FEED CHANNEL:
+          </span>
+          <button
+            onClick={() => setCategoryFilter('ALL')}
+            className={`px-2.5 py-1 rounded text-xs font-mono transition-colors border ${
+              categoryFilter === 'ALL'
+                ? 'bg-[#00E5FF]/20 text-[#00E5FF] border-[#00E5FF]/50 font-bold'
+                : 'bg-[#0A0E1A] text-[#94A3B8] border-[#1E293B] hover:text-white'
+            }`}
+          >
+            ALL CHANNELS ({cameras.length})
+          </button>
+          <button
+            onClick={() => setCategoryFilter('EARTHCAM')}
+            className={`px-2.5 py-1 rounded text-xs font-mono transition-colors border flex items-center gap-1 ${
+              categoryFilter === 'EARTHCAM'
+                ? 'bg-[#00E5FF] text-[#0A0E1A] border-[#00E5FF] font-bold shadow-[0_0_10px_rgba(0,229,255,0.4)]'
+                : 'bg-[#0A0E1A] text-[#00E5FF] border-[#1E3A5F] hover:border-[#00E5FF]'
+            }`}
+          >
+            <Globe className="w-3.5 h-3.5" />
+            <span>EARTHCAM USA LIVE (4 CAMS)</span>
+          </button>
+          <button
+            onClick={() => setCategoryFilter('INDIA')}
+            className={`px-2.5 py-1 rounded text-xs font-mono transition-colors border ${
+              categoryFilter === 'INDIA'
+                ? 'bg-amber-400 text-slate-950 border-amber-400 font-bold'
+                : 'bg-[#0A0E1A] text-[#94A3B8] border-[#1E293B] hover:text-white'
+            }`}
+          >
+            🇮🇳 INDIA BORDER DEFENSE
+          </button>
+        </div>
+
+        {/* Vision Sensor Filters */}
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-xs font-mono text-[#64748B] mr-1 flex items-center gap-1">
+            <Eye className="w-3 h-3 text-[#00E5FF]" /> SENSOR SHADER:
+          </span>
+          {[
+            { id: 'optical', label: 'RGB Optical' },
+            { id: 'thermal', label: 'FLIR Thermal' },
+            { id: 'night', label: 'Night Vision' },
+            { id: 'tensor', label: 'Tensor Edge' },
+          ].map((mode) => (
+            <button
+              key={mode.id}
+              onClick={() => setVisionMode(mode.id as any)}
+              className={`px-2 py-0.5 rounded text-[11px] font-mono transition-colors border ${
+                visionMode === mode.id
+                  ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400 font-bold'
+                  : 'bg-[#0A0E1A] text-[#64748B] border-[#1E293B] hover:text-[#CBD5E1]'
+              }`}
+            >
+              {mode.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Grid of Feeds */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {primeFeeds.map((feed) => {
-          // Check if there is an active alert for this camera
-          const matchingAlert = activeAlerts.find((a) => a.cameraId === feed.id && a.status === 'UNACKNOWLEDGED');
+        {/* Local Webcam Feed Card (If active) */}
+        {webcamActive && (
+          <div className="rounded bg-[#111827] border-2 border-[#00E5FF] shadow-[0_0_18px_rgba(0,229,255,0.3)] overflow-hidden flex flex-col relative">
+            <div className="px-3 py-2 bg-[#0A0E1A] border-b border-[#1E3A5F] flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#00E5FF] animate-ping" />
+                <span className="font-mono font-bold text-[#00E5FF]">CAM-LOCAL-OPERATOR</span>
+                <span className="text-slate-300 text-[11px]">Primary Command Desk Webcam</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[10px] px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-400">
+                  HARDWARE SENTRY
+                </span>
+                <span className="font-mono text-[10px] text-emerald-400">30.0 FPS</span>
+              </div>
+            </div>
+
+            <div className="relative aspect-video bg-[#05080E] overflow-hidden flex items-center justify-center select-none">
+              <div className="absolute inset-0 cctv-scanline z-10 pointer-events-none" />
+              <video
+                ref={webcamVideoRef}
+                autoPlay
+                playsInline
+                muted
+                className="w-full h-full object-cover"
+                style={{ filter: getVisionFilterStyle(visionMode) }}
+              />
+
+              {/* Local AI Bounding Box */}
+              <div className="absolute top-[20%] left-[30%] w-[40%] h-[55%] border-2 border-[#00E5FF] z-10 flex flex-col justify-between p-1 bg-cyan-500/10 pointer-events-none">
+                <div className="bg-[#00E5FF] text-[#0A0E1A] text-[9px] font-mono font-bold px-1 py-0.2 self-start">
+                  OPERATOR VERIFIED [99.2%]
+                </div>
+                <div className="text-[8px] font-mono text-cyan-300 text-right">SEC-ID #HQ-01</div>
+              </div>
+
+              <div className="absolute top-2 left-2 w-3 h-3 border-t border-l border-[#00E5FF] pointer-events-none" />
+              <div className="absolute top-2 right-2 w-3 h-3 border-t border-r border-[#00E5FF] pointer-events-none" />
+              <div className="absolute bottom-2 left-2 w-3 h-3 border-b border-l border-[#00E5FF] pointer-events-none" />
+              <div className="absolute bottom-2 right-2 w-3 h-3 border-b border-r border-[#00E5FF] pointer-events-none" />
+            </div>
+
+            <div className="px-3 py-2 bg-[#0A0E1A] border-t border-[#1E3A5F] flex items-center justify-between text-[11px] text-[#64748B]">
+              <span>Hardware Video Device</span>
+              <button
+                onClick={stopWebcam}
+                className="text-[10px] text-rose-400 hover:text-rose-300 font-mono"
+              >
+                Disconnect Stream
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Regular & EarthCam Feeds */}
+        {filteredCameras.map((feed) => {
+          const isEarthCam = feed.sourceProvider === 'EarthCam USA' || feed.zone === 'Global-USA';
+          const isEmbedMode = earthCamViewMode[feed.id] === 'embed';
+          const matchingAlert = activeAlerts.find(
+            (a) => a.cameraId === feed.id && a.status === 'UNACKNOWLEDGED'
+          );
           const isAlerting = Boolean(matchingAlert);
           const fps = cameraStatuses[feed.id]?.fps || feed.fps;
 
@@ -973,47 +1289,85 @@ function LiveFeedsPage({
               key={feed.id}
               onClick={() => onInspectCamera(feed)}
               className={`rounded bg-[#111827] border transition-all cursor-pointer overflow-hidden group flex flex-col relative ${
-                isAlerting ? 'border-[#FF4444] shadow-[0_0_15px_rgba(255,68,68,0.3)]' : 'border-[#1E3A5F]'
+                isAlerting
+                  ? 'border-[#FF4444] shadow-[0_0_18px_rgba(255,68,68,0.4)]'
+                  : isEarthCam
+                  ? 'border-[#00E5FF]/40 hover:border-[#00E5FF] shadow-[0_0_12px_rgba(0,229,255,0.15)]'
+                  : 'border-[#1E3A5F] hover:border-[#38BDF8]'
               }`}
             >
+              {/* Card Header */}
               <div className="px-3 py-2 bg-[#0A0E1A] border-b border-[#1E3A5F] flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 overflow-hidden">
                   <span
-                    className={`w-2 h-2 rounded-full ${
-                      isAlerting ? 'bg-[#FF4444] animate-ping' : 'bg-[#00C853]'
+                    className={`w-2 h-2 rounded-full shrink-0 ${
+                      isAlerting ? 'bg-[#FF4444] animate-ping' : isEarthCam ? 'bg-[#00E5FF]' : 'bg-[#00C853]'
                     }`}
                   />
                   <span className="font-mono font-bold text-white group-hover:text-[#00E5FF]">
                     {feed.id}
                   </span>
-                  <span className="text-[#64748B] text-[11px] truncate max-w-[140px]">
+                  <span className="text-[#94A3B8] text-[11px] truncate max-w-[130px]" title={feed.location}>
                     {feed.location}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {isEarthCam && (
+                    <span className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/40">
+                      EARTHCAM
+                    </span>
+                  )}
                   <span className="font-mono text-[10px] px-1.5 py-0.2 rounded bg-[#111827] text-slate-300 border border-[#1E293B]">
                     {feed.resolution.split(' ')[0]}
                   </span>
                   <span className="font-mono text-[10px] text-cyan-400">
-                    {fps} FPS
+                    {fps.toFixed(1)} FPS
                   </span>
                 </div>
               </div>
 
-              {/* Video Simulated Viewport */}
+              {/* Card Video or EarthCam Embed Viewport */}
               <div className="relative aspect-video bg-[#05080E] overflow-hidden flex items-center justify-center select-none">
-                <div className="absolute inset-0 cctv-scanline z-10" />
-                <div className="scan-bar z-10" />
+                <div className="absolute inset-0 cctv-scanline z-10 pointer-events-none" />
+                <div className="scan-bar z-10 pointer-events-none" />
 
-                {/* Wireframe background */}
-                <div className="absolute inset-0 opacity-40">
-                  <svg viewBox="0 0 400 225" className="w-full h-full">
-                    <line x1="0" y1="120" x2="400" y2="120" stroke="#1E293B" strokeWidth="1" />
-                    <line x1="0" y1="140" x2="400" y2="140" stroke="#334155" strokeWidth="1.5" strokeDasharray="4 4" />
-                    <polygon points="320,140 330,70 340,140" fill="#0A0E1A" stroke="#1E293B" strokeWidth="1" />
-                  </svg>
-                </div>
+                {/* Corner reticles */}
+                <div className="absolute top-2 left-2 w-3 h-3 border-t border-l border-[#00E5FF]/40 pointer-events-none z-10" />
+                <div className="absolute top-2 right-2 w-3 h-3 border-t border-r border-[#00E5FF]/40 pointer-events-none z-10" />
+                <div className="absolute bottom-2 left-2 w-3 h-3 border-b border-l border-[#00E5FF]/40 pointer-events-none z-10" />
+                <div className="absolute bottom-2 right-2 w-3 h-3 border-b border-r border-[#00E5FF]/40 pointer-events-none z-10" />
+
+                {isEmbedMode && feed.earthCamUrl ? (
+                  <div className="w-full h-full relative z-0 bg-[#000]">
+                    <iframe
+                      src={feed.earthCamUrl}
+                      title={feed.location}
+                      className="w-full h-full border-0 pointer-events-auto"
+                      sandbox="allow-scripts allow-same-origin allow-popups"
+                    />
+                  </div>
+                ) : (
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    src={feed.videoSrc || '/videos/cam-001.mp4'}
+                    className="w-full h-full object-cover"
+                    style={{ filter: getVisionFilterStyle(visionMode) }}
+                  />
+                )}
+
+                {/* EarthCam USA Badge Overlay */}
+                {isEarthCam && (
+                  <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 bg-[#0A0E1A]/85 backdrop-blur-xs border border-[#00E5FF]/40 px-2 py-0.5 rounded text-[10px] font-mono text-cyan-300">
+                    <Globe className="w-3 h-3 text-[#00E5FF]" />
+                    <span className="font-bold">EARTHCAM 4K LIVE</span>
+                    <span className="text-[#64748B]">|</span>
+                    <span className="text-white">{feed.city || feed.location}</span>
+                  </div>
+                )}
 
                 {/* Blinking Red Alert Overlay when active alert */}
                 {isAlerting && (
@@ -1028,31 +1382,69 @@ function LiveFeedsPage({
                 )}
 
                 {/* Bounding Box Simulation */}
-                {isAlerting && (
-                  <div className="absolute top-[32%] left-[30%] w-[38%] h-[50%] border-2 border-[#FF4444] z-10 flex flex-col justify-between p-1 bg-rose-500/10">
+                {isAlerting ? (
+                  <div className="absolute top-[32%] left-[30%] w-[38%] h-[50%] border-2 border-[#FF4444] z-10 flex flex-col justify-between p-1 bg-rose-500/10 pointer-events-none">
                     <div className="bg-[#FF4444] text-white text-[9px] font-mono font-bold px-1 py-0.2 self-start">
                       {matchingAlert?.type} [{matchingAlert?.confidence}%]
                     </div>
                   </div>
-                )}
+                ) : isEarthCam ? (
+                  <div className="absolute top-[38%] left-[25%] w-[45%] h-[40%] border border-[#00E5FF]/60 z-10 flex flex-col justify-between p-1 bg-cyan-500/5 pointer-events-none">
+                    <div className="bg-[#00E5FF]/90 text-[#0A0E1A] text-[8px] font-mono font-bold px-1 py-0.2 self-start rounded-xs">
+                      CROWD/TRAFFIC ANALYTICS [97.8%]
+                    </div>
+                    <div className="text-[7px] font-mono text-cyan-300/80 text-right">
+                      AUTO-TRACKING
+                    </div>
+                  </div>
+                ) : null}
 
-                {/* Corner reticles */}
-                <div className="absolute top-2 left-2 w-3 h-3 border-t border-l border-[#00E5FF]/40 pointer-events-none" />
-                <div className="absolute top-2 right-2 w-3 h-3 border-t border-r border-[#00E5FF]/40 pointer-events-none" />
-                <div className="absolute bottom-2 left-2 w-3 h-3 border-b border-l border-[#00E5FF]/40 pointer-events-none" />
-                <div className="absolute bottom-2 right-2 w-3 h-3 border-b border-r border-[#00E5FF]/40 pointer-events-none" />
-
-                <div className="absolute inset-0 bg-[#0A0E1A]/40 opacity-0 group-hover:opacity-100 transition-opacity z-20 flex items-center justify-center gap-2 text-white text-xs font-semibold">
+                {/* Hover Action Overlay */}
+                <div className="absolute inset-0 bg-[#0A0E1A]/50 opacity-0 group-hover:opacity-100 transition-opacity z-20 flex items-center justify-center gap-2 text-white text-xs font-semibold pointer-events-none">
                   <Maximize2 className="w-4 h-4 text-[#00E5FF]" />
                   <span>Inspect Forensic Telemetry</span>
                 </div>
               </div>
 
-              <div className="px-3 py-2 bg-[#111827] border-t border-[#1E3A5F] flex items-center justify-between text-[11px] text-[#64748B]">
-                <span>{feed.aiModel}</span>
-                <span className="font-mono text-[10px] text-slate-400">
-                  Uptime: {feed.uptime}
-                </span>
+              {/* Card Footer with Stream Switcher & Details */}
+              <div className="px-3 py-2 bg-[#0A0E1A] border-t border-[#1E3A5F] flex items-center justify-between text-[11px] text-[#64748B]">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-[10px] text-cyan-400">
+                    {feed.aiModel}
+                  </span>
+                  <span className="text-[#1E3A5F]">|</span>
+                  <span className="font-mono text-[10px] text-slate-400">
+                    Up: {feed.uptime}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                  {feed.earthCamUrl && (
+                    <>
+                      <button
+                        onClick={(e) => toggleEarthCamMode(feed.id, e)}
+                        className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold transition-colors border ${
+                          isEmbedMode
+                            ? 'bg-[#00E5FF] text-[#0A0E1A] border-[#00E5FF]'
+                            : 'bg-[#111827] text-[#00E5FF] border-[#1E3A5F] hover:border-[#00E5FF]'
+                        }`}
+                        title="Toggle between AI Tactical Video Stream and Live EarthCam Web Embed"
+                      >
+                        {isEmbedMode ? 'Tactical Video' : 'EarthCam Web'}
+                      </button>
+
+                      <a
+                        href={feed.earthCamUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-1 rounded bg-[#111827] border border-[#1E3A5F] text-[#64748B] hover:text-[#00E5FF] hover:border-[#00E5FF] transition-colors"
+                        title="Open Official EarthCam Stream in New Tab"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           );
@@ -1702,23 +2094,302 @@ function CameraExpandedModal({
   camera: CameraItem;
   onClose: () => void;
 }) {
+  const [modalVision, setModalVision] = useState<'optical' | 'thermal' | 'night' | 'tensor'>('optical');
+  const [viewMode, setViewMode] = useState<'video' | 'embed'>('video');
+  const [zoomLevel, setZoomLevel] = useState<number>(1);
+  const [panOffset, setPanOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [snapshotSuccess, setSnapshotSuccess] = useState<boolean>(false);
+
+  const isEarthCam = camera.sourceProvider === 'EarthCam USA' || camera.zone === 'Global-USA';
+
+  const getVisionFilter = (mode: 'optical' | 'thermal' | 'night' | 'tensor') => {
+    switch (mode) {
+      case 'thermal':
+        return 'hue-rotate(180deg) saturate(2.5) contrast(1.4)';
+      case 'night':
+        return 'sepia(1) hue-rotate(85deg) saturate(3) brightness(1.2) contrast(1.2)';
+      case 'tensor':
+        return 'contrast(2) grayscale(1) invert(0.15)';
+      default:
+        return 'none';
+    }
+  };
+
+  const handleCaptureSnapshot = () => {
+    setSnapshotSuccess(true);
+    setTimeout(() => setSnapshotSuccess(false), 3000);
+  };
+
+  const handlePan = (dx: number, dy: number) => {
+    setPanOffset((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+  };
+
+  const handleResetPtz = () => {
+    setZoomLevel(1);
+    setPanOffset({ x: 0, y: 0 });
+  };
+
   return (
-    <div className="fixed inset-0 z-50 bg-[#0A0E1A]/90 backdrop-blur-md flex items-center justify-center p-3 md:p-6 select-none">
-      <div className="w-full max-w-5xl h-[80vh] bg-[#111827] border border-[#00E5FF]/50 rounded flex flex-col shadow-2xl overflow-hidden">
-        <div className="h-12 px-4 bg-[#0A0E1A] border-b border-[#1E3A5F] flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-2">
-            <span className="font-mono font-bold text-white text-sm">{camera.id}</span>
-            <span className="text-xs text-[#64748B]">— {camera.location}</span>
+    <div className="fixed inset-0 z-50 bg-[#0A0E1A]/95 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 select-none">
+      <div className="w-full max-w-6xl h-[90vh] bg-[#111827] border border-[#00E5FF]/60 rounded flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        {/* Modal Top Bar */}
+        <div className="h-14 px-4 bg-[#0A0E1A] border-b border-[#1E3A5F] flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-3">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#00E5FF] animate-ping" />
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-mono font-bold text-white text-sm sm:text-base">{camera.id}</span>
+                <span className="text-xs text-cyan-400 font-semibold">— {camera.location}</span>
+                {isEarthCam && (
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#00E5FF]/15 text-[#00E5FF] border border-[#00E5FF]/30 hidden sm:inline-flex items-center gap-1">
+                    <Globe className="w-3 h-3" /> EarthCam USA Official Live Stream
+                  </span>
+                )}
+              </div>
+              <div className="text-[10px] font-mono text-[#64748B]">
+                COORDS: {camera.lat.toFixed(4)}° N, {camera.lon.toFixed(4)}° E • ZONE: {camera.zone} • {camera.aiModel}
+              </div>
+            </div>
           </div>
-          <button onClick={onClose} className="p-1 rounded text-[#64748B] hover:text-white">
-            <X className="w-5 h-5" />
-          </button>
+
+          <div className="flex items-center gap-2">
+            {camera.earthCamUrl && (
+              <a
+                href={camera.earthCamUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#00E5FF]/15 border border-[#00E5FF]/40 text-[#00E5FF] text-xs font-mono hover:bg-[#00E5FF]/25 transition-colors"
+                title="Open directly on EarthCam.com"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                <span>Open EarthCam Portal</span>
+              </a>
+            )}
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded text-[#64748B] hover:text-white hover:bg-[#1E293B] transition-colors"
+              title="Close Fullscreen View"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
-        <div className="flex-1 bg-[#05080E] relative flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 cctv-scanline z-10" />
-          <div className="text-center font-mono text-cyan-300 text-xs z-10">
-            [High-Resolution FLIR Sensor Feed Active • 4K 60FPS • Coords: {camera.lat}, {camera.lon}]
+        {/* Modal Center Layout: Video Viewport + Forensic Controls */}
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+          {/* Main Viewport */}
+          <div className="flex-1 bg-[#05080E] relative flex items-center justify-center overflow-hidden">
+            <div className="absolute inset-0 cctv-scanline z-10 pointer-events-none" />
+
+            {/* Viewport Content */}
+            {viewMode === 'embed' && camera.earthCamUrl ? (
+              <iframe
+                src={camera.earthCamUrl}
+                title={camera.location}
+                className="w-full h-full border-0 relative z-0"
+                sandbox="allow-scripts allow-same-origin allow-popups"
+              />
+            ) : (
+              <div
+                className="w-full h-full relative flex items-center justify-center transition-transform duration-200"
+                style={{
+                  transform: `scale(${zoomLevel}) translate(${panOffset.x}px, ${panOffset.y}px)`,
+                }}
+              >
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  src={camera.videoSrc || '/videos/cam-001.mp4'}
+                  className="w-full h-full object-cover"
+                  style={{ filter: getVisionFilter(modalVision) }}
+                />
+              </div>
+            )}
+
+            {/* Tactical HUD Reticle Overlays */}
+            <div className="absolute top-4 left-4 w-6 h-6 border-t-2 border-l-2 border-[#00E5FF] pointer-events-none z-20" />
+            <div className="absolute top-4 right-4 w-6 h-6 border-t-2 border-r-2 border-[#00E5FF] pointer-events-none z-20" />
+            <div className="absolute bottom-4 left-4 w-6 h-6 border-b-2 border-l-2 border-[#00E5FF] pointer-events-none z-20" />
+            <div className="absolute bottom-4 right-4 w-6 h-6 border-b-2 border-r-2 border-[#00E5FF] pointer-events-none z-20" />
+
+            {/* Center Targeting Crosshair */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20 opacity-30">
+              <Crosshair className="w-16 h-16 text-[#00E5FF]" />
+            </div>
+
+            {/* Live Timestamp & Telemetry Watermark */}
+            <div className="absolute top-4 left-8 z-20 font-mono text-[11px] text-cyan-300 bg-[#0A0E1A]/80 px-2 py-1 rounded border border-[#1E3A5F] pointer-events-none">
+              <div>STREAM: {camera.id} // 4K 60FPS</div>
+              <div className="text-[10px] text-slate-400">BITRATE: 8.4 Mbps • CODEC: H.265 / HEVC</div>
+            </div>
+
+            {/* Snapshot Toast Banner */}
+            {snapshotSuccess && (
+              <div className="absolute top-4 inset-x-0 mx-auto w-fit z-30 font-mono text-xs text-emerald-400 bg-emerald-950/90 border border-emerald-500/50 px-4 py-1.5 rounded shadow-lg flex items-center gap-2 animate-bounce">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>FRAME SNAPSHOT CAPTURED & SAVED TO FORENSIC LOGS</span>
+              </div>
+            )}
+          </div>
+
+          {/* Forensic Telemetry & PTZ Control Panel */}
+          <div className="w-full lg:w-80 bg-[#0A0E1A] border-t lg:border-t-0 lg:border-l border-[#1E3A5F] p-4 flex flex-col justify-between overflow-y-auto shrink-0 space-y-4">
+            {/* Stream View Modes */}
+            <div className="space-y-2">
+              <div className="text-[11px] font-mono text-[#64748B] uppercase tracking-wider">
+                Display Feed Source
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => setViewMode('video')}
+                  className={`px-3 py-2 rounded text-xs font-mono font-semibold transition-colors border text-center ${
+                    viewMode === 'video'
+                      ? 'bg-[#00E5FF]/20 text-[#00E5FF] border-[#00E5FF]/50'
+                      : 'bg-[#111827] text-slate-400 border-[#1E293B] hover:text-white'
+                  }`}
+                >
+                  AI Video Stream
+                </button>
+                {camera.earthCamUrl ? (
+                  <button
+                    onClick={() => setViewMode('embed')}
+                    className={`px-3 py-2 rounded text-xs font-mono font-semibold transition-colors border text-center ${
+                      viewMode === 'embed'
+                        ? 'bg-[#00E5FF] text-[#0A0E1A] border-[#00E5FF]'
+                        : 'bg-[#111827] text-cyan-300 border-[#1E3A5F] hover:border-[#00E5FF]'
+                    }`}
+                  >
+                    EarthCam Embed
+                  </button>
+                ) : (
+                  <button
+                    disabled
+                    className="px-3 py-2 rounded text-xs font-mono bg-[#111827] text-[#475569] border-[#1E293B] cursor-not-allowed text-center"
+                  >
+                    Direct RTSP
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Sensor Vision Shaders */}
+            <div className="space-y-2">
+              <div className="text-[11px] font-mono text-[#64748B] uppercase tracking-wider flex items-center gap-1.5">
+                <Eye className="w-3.5 h-3.5 text-[#00E5FF]" />
+                <span>Sensor Visual Pipeline</span>
+              </div>
+              <div className="grid grid-cols-2 gap-1.5">
+                {[
+                  { id: 'optical', label: 'RGB Optical' },
+                  { id: 'thermal', label: 'FLIR Thermal' },
+                  { id: 'night', label: 'Night Vision' },
+                  { id: 'tensor', label: 'Tensor Edge' },
+                ].map((mode) => (
+                  <button
+                    key={mode.id}
+                    onClick={() => setModalVision(mode.id as any)}
+                    className={`px-2 py-1.5 rounded text-xs font-mono transition-colors border text-center ${
+                      modalVision === mode.id
+                        ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400 font-bold'
+                        : 'bg-[#111827] text-slate-400 border-[#1E293B] hover:text-white'
+                    }`}
+                  >
+                    {mode.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* PTZ (Pan / Tilt / Zoom) Controls */}
+            <div className="space-y-2">
+              <div className="text-[11px] font-mono text-[#64748B] uppercase tracking-wider flex items-center justify-between">
+                <span>Tactical PTZ Sentry</span>
+                <span className="text-cyan-400">{zoomLevel.toFixed(1)}x ZOOM</span>
+              </div>
+              <div className="bg-[#111827] p-3 rounded border border-[#1E3A5F] space-y-2.5">
+                <div className="grid grid-cols-3 gap-1 text-center font-mono text-xs">
+                  <div />
+                  <button
+                    onClick={() => handlePan(0, 20)}
+                    className="p-2 rounded bg-[#0A0E1A] hover:bg-[#1E293B] border border-[#1E3A5F] text-slate-200"
+                    title="Tilt Up"
+                  >
+                    ▲
+                  </button>
+                  <div />
+                  <button
+                    onClick={() => handlePan(20, 0)}
+                    className="p-2 rounded bg-[#0A0E1A] hover:bg-[#1E293B] border border-[#1E3A5F] text-slate-200"
+                    title="Pan Left"
+                  >
+                    ◀
+                  </button>
+                  <button
+                    onClick={handleResetPtz}
+                    className="p-2 rounded bg-[#0A0E1A] hover:bg-[#1E293B] border border-[#1E3A5F] text-cyan-400 font-bold text-[10px]"
+                    title="Reset PTZ"
+                  >
+                    RESET
+                  </button>
+                  <button
+                    onClick={() => handlePan(-20, 0)}
+                    className="p-2 rounded bg-[#0A0E1A] hover:bg-[#1E293B] border border-[#1E3A5F] text-slate-200"
+                    title="Pan Right"
+                  >
+                    ▶
+                  </button>
+                  <div />
+                  <button
+                    onClick={() => handlePan(0, -20)}
+                    className="p-2 rounded bg-[#0A0E1A] hover:bg-[#1E293B] border border-[#1E3A5F] text-slate-200"
+                    title="Tilt Down"
+                  >
+                    ▼
+                  </button>
+                  <div />
+                </div>
+
+                <div className="flex items-center gap-2 pt-1 border-t border-[#1E293B]">
+                  <button
+                    onClick={() => setZoomLevel((z) => Math.min(3, z + 0.25))}
+                    className="flex-1 py-1 rounded bg-[#0A0E1A] hover:bg-[#1E293B] border border-[#1E3A5F] text-xs font-mono text-cyan-300"
+                  >
+                    + Zoom In
+                  </button>
+                  <button
+                    onClick={() => setZoomLevel((z) => Math.max(1, z - 0.25))}
+                    className="flex-1 py-1 rounded bg-[#0A0E1A] hover:bg-[#1E293B] border border-[#1E3A5F] text-xs font-mono text-cyan-300"
+                  >
+                    - Zoom Out
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Actions & Snapshot */}
+            <div className="space-y-2 pt-2 border-t border-[#1E3A5F]">
+              <button
+                onClick={handleCaptureSnapshot}
+                className="w-full py-2 px-3 rounded bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-mono font-bold flex items-center justify-center gap-2 transition-colors"
+              >
+                <CameraIcon className="w-4 h-4" />
+                <span>Capture Frame Snapshot</span>
+              </button>
+
+              {camera.earthCamUrl && (
+                <a
+                  href={camera.earthCamUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2 px-3 rounded bg-[#00E5FF]/10 hover:bg-[#00E5FF]/20 border border-[#00E5FF]/30 text-[#00E5FF] text-xs font-mono font-semibold flex items-center justify-center gap-2 transition-colors"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  <span>Launch External EarthCam</span>
+                </a>
+              )}
+            </div>
           </div>
         </div>
       </div>

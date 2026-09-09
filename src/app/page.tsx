@@ -270,7 +270,7 @@ async function generateSha256(data: string): Promise<string> {
 
 export default function App() {
   const [mounted, setMounted] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<NavigationTab>('overview');
+  const [activeTab, setActiveTab] = useState<NavigationTab>('feeds');
   const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(false);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState<boolean>(true);
   const [selectedZone, setSelectedZone] = useState<ZoneName | null>(null);
@@ -923,6 +923,99 @@ function CommandOverviewPage({
         <KpiBlock label="UAVs Airborne" value={drones.filter((d) => d.status !== 'STANDBY').length.toString()} sublabel="Active Missions" color="#00E5FF" icon={<Navigation className="w-4 h-4 text-cyan-400" />} />
         <KpiBlock label="Vehicles Logged" value="128" sublabel="HSRP Auto ANPR" color="#00E5FF" icon={<Car className="w-4 h-4 text-cyan-400" />} />
         <KpiBlock label="Watchlist Hits" value="3" sublabel="POI Intercepts" color="#FFAA00" icon={<Users className="w-4 h-4 text-amber-400" />} />
+      </div>
+
+      {/* EarthCam USA 24/7 Global Surveillance Feeds Showcase */}
+      <div className="rounded border border-[#1E3A5F] bg-[#111827] p-4 flex flex-col space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-[#1E293B]">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping" />
+            <h2 className="text-xs font-bold text-white tracking-wide flex items-center gap-2">
+              <span>EarthCam USA Live Sentry Network (24/7 Real-Time Video Feeds)</span>
+              <span className="text-[10px] font-mono text-rose-300 bg-rose-500/20 px-2 py-0.5 rounded border border-rose-500/40 font-bold">
+                4 LIVE CHANNELS
+              </span>
+            </h2>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-mono text-cyan-400 hidden md:inline">
+              TIMES SQUARE • TEXAS • LAS VEGAS • NEW YORK
+            </span>
+            <button
+              onClick={() => onNavigate('feeds')}
+              className="px-2.5 py-1 rounded bg-[#00E5FF]/20 hover:bg-[#00E5FF]/30 border border-[#00E5FF]/40 text-[11px] font-mono font-semibold text-[#00E5FF] flex items-center gap-1.5 transition-colors"
+            >
+              <span>Open Full Surveillance Grid</span>
+              <ArrowRight className="w-3 h-3" />
+            </button>
+          </div>
+        </div>
+
+        {/* 4-Camera EarthCam USA Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {cameras.filter(c => c.sourceProvider === 'EarthCam USA' || c.zone === 'Global-USA').slice(0, 4).map((cam) => (
+            <div
+              key={cam.id}
+              onClick={() => onSelectCamera(cam.id)}
+              className="rounded bg-[#0A0E1A] border border-[#1E3A5F] hover:border-[#00E5FF] transition-all overflow-hidden flex flex-col group cursor-pointer shadow-sm"
+            >
+              {/* Header */}
+              <div className="px-2.5 py-1.5 bg-[#05080E] border-b border-[#1E293B] flex items-center justify-between text-[11px]">
+                <div className="flex items-center gap-1.5 overflow-hidden">
+                  <span className="w-2 h-2 rounded-full bg-[#FF4444] animate-ping shrink-0" />
+                  <span className="font-mono font-bold text-[#00E5FF]">{cam.id}</span>
+                  <span className="text-[#94A3B8] truncate">{cam.location}</span>
+                </div>
+                <span className="font-mono text-[9px] px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 font-bold shrink-0">
+                  LIVE
+                </span>
+              </div>
+
+              {/* Live Video Embed */}
+              <div className="relative aspect-video bg-black overflow-hidden flex items-center justify-center">
+                <div className="absolute inset-0 cctv-scanline z-10 pointer-events-none" />
+                {cam.liveEmbedUrl ? (
+                  <iframe
+                    src={cam.liveEmbedUrl}
+                    title={`${cam.location} EarthCam Feed`}
+                    className="w-full h-full border-0 pointer-events-auto"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    src={cam.videoSrc || '/videos/cam-001.mp4'}
+                    className="w-full h-full object-cover"
+                  />
+                )}
+                {/* City badge */}
+                <div className="absolute bottom-1.5 left-1.5 z-20 px-1.5 py-0.5 rounded bg-[#0A0E1A]/85 border border-[#1E3A5F] text-[9px] font-mono text-cyan-300 pointer-events-none">
+                  {cam.city || cam.location}
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="px-2.5 py-1.5 bg-[#05080E] border-t border-[#1E293B] flex items-center justify-between text-[10px] font-mono text-[#64748B]">
+                <span className="text-cyan-400">{cam.aiModel}</span>
+                <a
+                  href={cam.earthCamUrl || 'https://www.earthcam.com'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-slate-400 hover:text-white flex items-center gap-0.5"
+                  title="Open on EarthCam.com"
+                >
+                  <span>EarthCam</span>
+                  <ExternalLink className="w-2.5 h-2.5" />
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Leaflet Real OpenStreetMap Canvas (Requirement 3) */}

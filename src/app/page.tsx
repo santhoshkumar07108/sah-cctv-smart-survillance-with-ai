@@ -275,6 +275,16 @@ export default function App() {
 
   useEffect(() => {
     setMounted(true);
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab') as NavigationTab;
+      const hashParam = window.location.hash.replace('#', '') as NavigationTab;
+      if (tabParam && ['overview', 'feeds', 'alerts', 'anpr', 'faces', 'drone', 'blockchain', 'status'].includes(tabParam)) {
+        setActiveTab(tabParam);
+      } else if (hashParam && ['overview', 'feeds', 'alerts', 'anpr', 'faces', 'drone', 'blockchain', 'status'].includes(hashParam)) {
+        setActiveTab(hashParam);
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -465,6 +475,14 @@ export default function App() {
 
         {/* Right: Operator info & Panel Toggles */}
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => setActiveTab('feeds')}
+            className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded bg-[#00E5FF]/15 border border-[#00E5FF]/40 text-[#00E5FF] text-xs font-semibold hover:bg-[#00E5FF]/25 transition-colors"
+            title="View EarthCam USA Live Streams"
+          >
+            <Globe className="w-3.5 h-3.5 text-[#00E5FF]" /> EarthCam USA Feeds
+          </button>
+
           <button
             onClick={triggerManualAlert}
             className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs font-semibold hover:bg-rose-500/25 transition-colors"
@@ -873,6 +891,12 @@ function CommandOverviewPage({
 
         <div className="flex items-center gap-2">
           <button
+            onClick={() => onNavigate('feeds')}
+            className="px-3 py-1.5 rounded bg-[#00E5FF]/20 hover:bg-[#00E5FF]/30 border border-[#00E5FF]/50 text-xs font-semibold text-[#00E5FF] flex items-center gap-1.5 transition-colors"
+          >
+            <Globe className="w-3.5 h-3.5 text-[#00E5FF]" /> EarthCam Live Feeds
+          </button>
+          <button
             onClick={() => onNavigate('drone')}
             className="px-3 py-1.5 rounded bg-[#111827] hover:bg-[#1E2A3A] border border-[#1E3A5F] text-xs font-semibold text-slate-200 flex items-center gap-1.5 transition-colors"
           >
@@ -889,7 +913,7 @@ function CommandOverviewPage({
 
       {/* KPI Strip */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        <KpiBlock label="Cameras Online" value="42/48" sublabel="87.5% Operational" color="#00C853" icon={<Video className="w-4 h-4 text-emerald-400" />} />
+        <KpiBlock label="Feeds Online" value="14/14" sublabel="4 EarthCam + 10 Defense" color="#00C853" icon={<Video className="w-4 h-4 text-emerald-400" />} />
         <KpiBlock label="Active Alerts" value={alerts.filter((a) => a.status === 'UNACKNOWLEDGED').length.toString()} sublabel="Unacknowledged" color="#FF4444" icon={<AlertTriangle className="w-4 h-4 text-rose-400" />} highlight />
         <KpiBlock label="UAVs Airborne" value={drones.filter((d) => d.status !== 'STANDBY').length.toString()} sublabel="Active Missions" color="#00E5FF" icon={<Navigation className="w-4 h-4 text-cyan-400" />} />
         <KpiBlock label="Vehicles Logged" value="128" sublabel="HSRP Auto ANPR" color="#00E5FF" icon={<Car className="w-4 h-4 text-cyan-400" />} />

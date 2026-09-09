@@ -107,6 +107,7 @@ interface CameraItem {
   lastSeen: string;
   uptime: string;
   videoSrc?: string;
+  liveEmbedUrl?: string;
   earthCamUrl?: string;
   sourceProvider?: 'EarthCam USA' | 'IBVAP Defense Edge';
   country?: string;
@@ -161,7 +162,7 @@ function HsrpPlateBadge({ plateNumber }: { plateNumber: string }) {
    ========================================================================= */
 
 const BASE_CAMERAS: CameraItem[] = [
-  // --- EARTHCAM LIVE FEEDS (UNITED STATES) ---
+  // --- EARTHCAM 24/7 LIVE FEEDS (UNITED STATES) ---
   {
     id: 'CAM-USA-01',
     location: 'Times Square, USA',
@@ -175,6 +176,7 @@ const BASE_CAMERAS: CameraItem[] = [
     lastSeen: 'Live Now',
     uptime: '99.99%',
     videoSrc: '/videos/cam-001.mp4',
+    liveEmbedUrl: 'https://www.youtube-nocookie.com/embed/QhFYcPBmkcI?autoplay=1&mute=1&playsinline=1',
     earthCamUrl: 'https://www.earthcam.com/usa/newyork/timessquare/?cam=tsstreet',
     sourceProvider: 'EarthCam USA',
     country: 'USA',
@@ -193,6 +195,7 @@ const BASE_CAMERAS: CameraItem[] = [
     lastSeen: 'Live Now',
     uptime: '99.95%',
     videoSrc: '/videos/cam-002.mp4',
+    liveEmbedUrl: 'https://www.youtube-nocookie.com/embed/SDK_m1_BVJ4?autoplay=1&mute=1&playsinline=1',
     earthCamUrl: 'https://www.earthcam.com/usa/texas/dallas/dealeyplaza/?cam=dealeyplaza',
     sourceProvider: 'EarthCam USA',
     country: 'USA',
@@ -211,6 +214,7 @@ const BASE_CAMERAS: CameraItem[] = [
     lastSeen: 'Live Now',
     uptime: '99.98%',
     videoSrc: '/videos/cam-003.mp4',
+    liveEmbedUrl: 'https://www.youtube-nocookie.com/embed/_rmUXOHSf0w?autoplay=1&mute=1&playsinline=1',
     earthCamUrl: 'https://www.earthcam.com/usa/nevada/lasvegas/index.php?cam=catsmeow_fremont',
     sourceProvider: 'EarthCam USA',
     country: 'USA',
@@ -229,6 +233,7 @@ const BASE_CAMERAS: CameraItem[] = [
     lastSeen: 'Live Now',
     uptime: '99.97%',
     videoSrc: '/videos/cam-004.mp4',
+    liveEmbedUrl: 'https://www.youtube-nocookie.com/embed/zMCea32gpmg?autoplay=1&mute=1&playsinline=1',
     earthCamUrl: 'https://www.earthcam.com/usa/newyork/skyline/?cam=skyline_g',
     sourceProvider: 'EarthCam USA',
     country: 'USA',
@@ -1053,7 +1058,7 @@ function LiveFeedsPage({
 }) {
   const [categoryFilter, setCategoryFilter] = useState<'ALL' | 'EARTHCAM' | 'INDIA'>('ALL');
   const [visionMode, setVisionMode] = useState<'optical' | 'thermal' | 'night' | 'tensor'>('optical');
-  const [earthCamViewMode, setEarthCamViewMode] = useState<Record<string, 'video' | 'embed'>>({});
+  const [streamMode, setStreamMode] = useState<Record<string, 'live' | 'embed' | 'ai'>>({});
   
   // Local Webcam Sentry Integration
   const [webcamActive, setWebcamActive] = useState<boolean>(false);
@@ -1123,14 +1128,6 @@ function LiveFeedsPage({
     return cameras;
   }, [cameras, categoryFilter]);
 
-  const toggleEarthCamMode = (camId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setEarthCamViewMode((prev) => ({
-      ...prev,
-      [camId]: prev[camId] === 'embed' ? 'video' : 'embed',
-    }));
-  };
-
   return (
     <div className="space-y-4">
       {/* Top Banner & Telemetry Bar */}
@@ -1141,15 +1138,16 @@ function LiveFeedsPage({
               <Video className="w-5 h-5 text-[#00E5FF] animate-pulse" />
               <span>Live Surveillance Grid & EarthCam Global Sentries</span>
             </h1>
-            <span className="text-[11px] font-mono text-[#00E5FF] bg-[#00E5FF]/10 px-2 py-0.5 rounded border border-[#00E5FF]/30 flex items-center gap-1">
-              <Globe className="w-3 h-3 text-[#00E5FF]" /> 4 EARTHCAM USA FEEDS
+            <span className="text-[11px] font-mono text-rose-300 bg-rose-500/15 px-2 py-0.5 rounded border border-rose-500/30 flex items-center gap-1.5 font-bold">
+              <span className="w-2 h-2 rounded-full bg-[#FF4444] animate-ping" />
+              <span>4 EARTHCAM USA 24/7 LIVE STREAMS ACTIVE</span>
             </span>
             <span className="text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">
               10 BORDER DEFENSE NODES
             </span>
           </div>
           <p className="text-xs text-[#64748B] mt-1">
-            Real-time HD feeds from <span className="text-cyan-400 font-semibold">EarthCam USA (Times Square, Texas, Las Vegas, New York)</span> alongside Indo-Bangladesh border radar optical channels with edge AI inference.
+            Real-time live video broadcasts from <span className="text-cyan-400 font-semibold">EarthCam USA (Times Square, Texas, Las Vegas, New York)</span> streaming 24/7 alongside Indo-Bangladesh border optical channels.
           </p>
         </div>
 
@@ -1301,7 +1299,7 @@ function LiveFeedsPage({
         {/* Regular & EarthCam Feeds */}
         {filteredCameras.map((feed) => {
           const isEarthCam = feed.sourceProvider === 'EarthCam USA' || feed.zone === 'Global-USA';
-          const isEmbedMode = earthCamViewMode[feed.id] === 'embed';
+          const activeMode = streamMode[feed.id] || (isEarthCam && feed.liveEmbedUrl ? 'live' : 'ai');
           const matchingAlert = activeAlerts.find(
             (a) => a.cameraId === feed.id && a.status === 'UNACKNOWLEDGED'
           );
@@ -1325,7 +1323,13 @@ function LiveFeedsPage({
                 <div className="flex items-center gap-2 overflow-hidden">
                   <span
                     className={`w-2 h-2 rounded-full shrink-0 ${
-                      isAlerting ? 'bg-[#FF4444] animate-ping' : isEarthCam ? 'bg-[#00E5FF]' : 'bg-[#00C853]'
+                      isAlerting
+                        ? 'bg-[#FF4444] animate-ping'
+                        : isEarthCam && activeMode === 'live'
+                        ? 'bg-[#FF4444] animate-ping'
+                        : isEarthCam
+                        ? 'bg-[#00E5FF]'
+                        : 'bg-[#00C853]'
                     }`}
                   />
                   <span className="font-mono font-bold text-white group-hover:text-[#00E5FF]">
@@ -1338,7 +1342,8 @@ function LiveFeedsPage({
 
                 <div className="flex items-center gap-1.5 shrink-0">
                   {isEarthCam && (
-                    <span className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/40">
+                    <span className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
                       EARTHCAM
                     </span>
                   )}
@@ -1351,7 +1356,7 @@ function LiveFeedsPage({
                 </div>
               </div>
 
-              {/* Card Video or EarthCam Embed Viewport */}
+              {/* Card Viewport: 24/7 Live Stream / Web Portal / AI Video */}
               <div className="relative aspect-video bg-[#05080E] overflow-hidden flex items-center justify-center select-none">
                 <div className="absolute inset-0 cctv-scanline z-10 pointer-events-none" />
                 <div className="scan-bar z-10 pointer-events-none" />
@@ -1362,7 +1367,17 @@ function LiveFeedsPage({
                 <div className="absolute bottom-2 left-2 w-3 h-3 border-b border-l border-[#00E5FF]/40 pointer-events-none z-10" />
                 <div className="absolute bottom-2 right-2 w-3 h-3 border-b border-r border-[#00E5FF]/40 pointer-events-none z-10" />
 
-                {isEmbedMode && feed.earthCamUrl ? (
+                {activeMode === 'live' && feed.liveEmbedUrl ? (
+                  <div className="w-full h-full relative z-0 bg-black">
+                    <iframe
+                      src={feed.liveEmbedUrl}
+                      title={`${feed.location} Live 24/7 Stream`}
+                      className="w-full h-full border-0 pointer-events-auto"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    />
+                  </div>
+                ) : activeMode === 'embed' && feed.earthCamUrl ? (
                   <div className="w-full h-full relative z-0 bg-[#000]">
                     <iframe
                       src={feed.earthCamUrl}
@@ -1383,13 +1398,13 @@ function LiveFeedsPage({
                   />
                 )}
 
-                {/* EarthCam USA Badge Overlay */}
+                {/* EarthCam 24/7 Live Badge Overlay */}
                 {isEarthCam && (
-                  <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 bg-[#0A0E1A]/85 backdrop-blur-xs border border-[#00E5FF]/40 px-2 py-0.5 rounded text-[10px] font-mono text-cyan-300">
-                    <Globe className="w-3 h-3 text-[#00E5FF]" />
-                    <span className="font-bold">EARTHCAM 4K LIVE</span>
+                  <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 bg-[#0A0E1A]/85 backdrop-blur-xs border border-rose-500/50 px-2 py-0.5 rounded text-[10px] font-mono text-rose-300 pointer-events-none">
+                    <span className="w-2 h-2 rounded-full bg-[#FF4444] animate-ping" />
+                    <span className="font-bold text-white">EARTHCAM 24/7 LIVE</span>
                     <span className="text-[#64748B]">|</span>
-                    <span className="text-white">{feed.city || feed.location}</span>
+                    <span className="text-cyan-300">{feed.city || feed.location}</span>
                   </div>
                 )}
 
@@ -1405,23 +1420,27 @@ function LiveFeedsPage({
                   </div>
                 )}
 
-                {/* Bounding Box Simulation */}
-                {isAlerting ? (
-                  <div className="absolute top-[32%] left-[30%] w-[38%] h-[50%] border-2 border-[#FF4444] z-10 flex flex-col justify-between p-1 bg-rose-500/10 pointer-events-none">
-                    <div className="bg-[#FF4444] text-white text-[9px] font-mono font-bold px-1 py-0.2 self-start">
-                      {matchingAlert?.type} [{matchingAlert?.confidence}%]
-                    </div>
-                  </div>
-                ) : isEarthCam ? (
-                  <div className="absolute top-[38%] left-[25%] w-[45%] h-[40%] border border-[#00E5FF]/60 z-10 flex flex-col justify-between p-1 bg-cyan-500/5 pointer-events-none">
-                    <div className="bg-[#00E5FF]/90 text-[#0A0E1A] text-[8px] font-mono font-bold px-1 py-0.2 self-start rounded-xs">
-                      CROWD/TRAFFIC ANALYTICS [97.8%]
-                    </div>
-                    <div className="text-[7px] font-mono text-cyan-300/80 text-right">
-                      AUTO-TRACKING
-                    </div>
-                  </div>
-                ) : null}
+                {/* Bounding Box Simulation in AI mode */}
+                {activeMode === 'ai' && (
+                  <>
+                    {isAlerting ? (
+                      <div className="absolute top-[32%] left-[30%] w-[38%] h-[50%] border-2 border-[#FF4444] z-10 flex flex-col justify-between p-1 bg-rose-500/10 pointer-events-none">
+                        <div className="bg-[#FF4444] text-white text-[9px] font-mono font-bold px-1 py-0.2 self-start">
+                          {matchingAlert?.type} [{matchingAlert?.confidence}%]
+                        </div>
+                      </div>
+                    ) : isEarthCam ? (
+                      <div className="absolute top-[38%] left-[25%] w-[45%] h-[40%] border border-[#00E5FF]/60 z-10 flex flex-col justify-between p-1 bg-cyan-500/5 pointer-events-none">
+                        <div className="bg-[#00E5FF]/90 text-[#0A0E1A] text-[8px] font-mono font-bold px-1 py-0.2 self-start rounded-xs">
+                          CROWD/TRAFFIC ANALYTICS [97.8%]
+                        </div>
+                        <div className="text-[7px] font-mono text-cyan-300/80 text-right">
+                          AUTO-TRACKING
+                        </div>
+                      </div>
+                    ) : null}
+                  </>
+                )}
 
                 {/* Hover Action Overlay */}
                 <div className="absolute inset-0 bg-[#0A0E1A]/50 opacity-0 group-hover:opacity-100 transition-opacity z-20 flex items-center justify-center gap-2 text-white text-xs font-semibold pointer-events-none">
@@ -1432,29 +1451,65 @@ function LiveFeedsPage({
 
               {/* Card Footer with Stream Switcher & Details */}
               <div className="px-3 py-2 bg-[#0A0E1A] border-t border-[#1E3A5F] flex items-center justify-between text-[11px] text-[#64748B]">
-                <div className="flex items-center gap-2">
-                  <span className="font-mono text-[10px] text-cyan-400">
+                <div className="flex items-center gap-2 overflow-hidden">
+                  <span className="font-mono text-[10px] text-cyan-400 truncate">
                     {feed.aiModel}
                   </span>
-                  <span className="text-[#1E3A5F]">|</span>
-                  <span className="font-mono text-[10px] text-slate-400">
+                  <span className="text-[#1E3A5F] hidden sm:inline">|</span>
+                  <span className="font-mono text-[10px] text-slate-400 hidden sm:inline">
                     Up: {feed.uptime}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                  {feed.earthCamUrl && (
+                <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
+                  {isEarthCam ? (
                     <>
+                      {feed.liveEmbedUrl && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setStreamMode((prev) => ({ ...prev, [feed.id]: 'live' }));
+                          }}
+                          className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold transition-colors border flex items-center gap-1 ${
+                            activeMode === 'live'
+                              ? 'bg-rose-500 text-white border-rose-500 shadow-[0_0_8px_rgba(255,68,68,0.5)]'
+                              : 'bg-[#111827] text-rose-300 border-[#1E3A5F] hover:border-rose-400'
+                          }`}
+                          title="Play 24/7 Live Stream from EarthCam"
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-ping" />
+                          <span>Live 24/7</span>
+                        </button>
+                      )}
+
                       <button
-                        onClick={(e) => toggleEarthCamMode(feed.id, e)}
-                        className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold transition-colors border ${
-                          isEmbedMode
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setStreamMode((prev) => ({ ...prev, [feed.id]: 'embed' }));
+                        }}
+                        className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold transition-colors border ${
+                          activeMode === 'embed'
                             ? 'bg-[#00E5FF] text-[#0A0E1A] border-[#00E5FF]'
                             : 'bg-[#111827] text-[#00E5FF] border-[#1E3A5F] hover:border-[#00E5FF]'
                         }`}
-                        title="Toggle between AI Tactical Video Stream and Live EarthCam Web Embed"
+                        title="Open Official EarthCam.com Web Frame"
                       >
-                        {isEmbedMode ? 'Tactical Video' : 'EarthCam Web'}
+                        Portal
+                      </button>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setStreamMode((prev) => ({ ...prev, [feed.id]: 'ai' }));
+                        }}
+                        className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold transition-colors border ${
+                          activeMode === 'ai'
+                            ? 'bg-cyan-500 text-[#0A0E1A] border-cyan-500'
+                            : 'bg-[#111827] text-slate-400 border-[#1E293B] hover:text-white'
+                        }`}
+                        title="Switch to AI Tactical Analytics View"
+                      >
+                        AI
                       </button>
 
                       <a
@@ -1462,12 +1517,12 @@ function LiveFeedsPage({
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-1 rounded bg-[#111827] border border-[#1E3A5F] text-[#64748B] hover:text-[#00E5FF] hover:border-[#00E5FF] transition-colors"
-                        title="Open Official EarthCam Stream in New Tab"
+                        title="Open on EarthCam.com"
                       >
                         <ExternalLink className="w-3 h-3" />
                       </a>
                     </>
-                  )}
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -2118,13 +2173,12 @@ function CameraExpandedModal({
   camera: CameraItem;
   onClose: () => void;
 }) {
+  const isEarthCam = camera.sourceProvider === 'EarthCam USA' || camera.zone === 'Global-USA';
   const [modalVision, setModalVision] = useState<'optical' | 'thermal' | 'night' | 'tensor'>('optical');
-  const [viewMode, setViewMode] = useState<'video' | 'embed'>('video');
+  const [viewMode, setViewMode] = useState<'live' | 'video' | 'embed'>(isEarthCam && camera.liveEmbedUrl ? 'live' : 'video');
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [panOffset, setPanOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [snapshotSuccess, setSnapshotSuccess] = useState<boolean>(false);
-
-  const isEarthCam = camera.sourceProvider === 'EarthCam USA' || camera.zone === 'Global-USA';
 
   const getVisionFilter = (mode: 'optical' | 'thermal' | 'night' | 'tensor') => {
     switch (mode) {
@@ -2159,14 +2213,15 @@ function CameraExpandedModal({
         {/* Modal Top Bar */}
         <div className="h-14 px-4 bg-[#0A0E1A] border-b border-[#1E3A5F] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#00E5FF] animate-ping" />
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping" />
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-mono font-bold text-white text-sm sm:text-base">{camera.id}</span>
                 <span className="text-xs text-cyan-400 font-semibold">— {camera.location}</span>
                 {isEarthCam && (
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#00E5FF]/15 text-[#00E5FF] border border-[#00E5FF]/30 hidden sm:inline-flex items-center gap-1">
-                    <Globe className="w-3 h-3" /> EarthCam USA Official Live Stream
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-500/15 text-rose-300 border border-rose-500/30 hidden sm:inline-flex items-center gap-1.5 font-bold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
+                    EarthCam 24/7 Live Stream Broadcast
                   </span>
                 )}
               </div>
@@ -2206,7 +2261,15 @@ function CameraExpandedModal({
             <div className="absolute inset-0 cctv-scanline z-10 pointer-events-none" />
 
             {/* Viewport Content */}
-            {viewMode === 'embed' && camera.earthCamUrl ? (
+            {viewMode === 'live' && camera.liveEmbedUrl ? (
+              <iframe
+                src={camera.liveEmbedUrl}
+                title={`${camera.location} Live 24/7 Stream`}
+                className="w-full h-full border-0 relative z-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            ) : viewMode === 'embed' && camera.earthCamUrl ? (
               <iframe
                 src={camera.earthCamUrl}
                 title={camera.location}
@@ -2245,8 +2308,8 @@ function CameraExpandedModal({
 
             {/* Live Timestamp & Telemetry Watermark */}
             <div className="absolute top-4 left-8 z-20 font-mono text-[11px] text-cyan-300 bg-[#0A0E1A]/80 px-2 py-1 rounded border border-[#1E3A5F] pointer-events-none">
-              <div>STREAM: {camera.id} // 4K 60FPS</div>
-              <div className="text-[10px] text-slate-400">BITRATE: 8.4 Mbps • CODEC: H.265 / HEVC</div>
+              <div>STREAM: {camera.id} // {viewMode === 'live' ? 'EARTHCAM 24/7 LIVE BROADCAST' : 'TACTICAL EDGE SENTRY'}</div>
+              <div className="text-[10px] text-slate-400">FPS: 30.0 • CODEC: H.264/H.265 • COORDS: {camera.lat.toFixed(2)}, {camera.lon.toFixed(2)}</div>
             </div>
 
             {/* Snapshot Toast Banner */}
@@ -2265,34 +2328,40 @@ function CameraExpandedModal({
               <div className="text-[11px] font-mono text-[#64748B] uppercase tracking-wider">
                 Display Feed Source
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-3 gap-1.5">
+                {camera.liveEmbedUrl && (
+                  <button
+                    onClick={() => setViewMode('live')}
+                    className={`px-2 py-2 rounded text-xs font-mono font-bold transition-colors border text-center flex flex-col items-center justify-center gap-0.5 ${
+                      viewMode === 'live'
+                        ? 'bg-rose-500 text-white border-rose-500 shadow-[0_0_8px_rgba(255,68,68,0.5)]'
+                        : 'bg-[#111827] text-rose-300 border-[#1E293B] hover:text-white'
+                    }`}
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-ping" />
+                    <span>24/7 Live</span>
+                  </button>
+                )}
                 <button
                   onClick={() => setViewMode('video')}
-                  className={`px-3 py-2 rounded text-xs font-mono font-semibold transition-colors border text-center ${
+                  className={`px-2 py-2 rounded text-xs font-mono font-semibold transition-colors border text-center ${
                     viewMode === 'video'
                       ? 'bg-[#00E5FF]/20 text-[#00E5FF] border-[#00E5FF]/50'
                       : 'bg-[#111827] text-slate-400 border-[#1E293B] hover:text-white'
                   }`}
                 >
-                  AI Video Stream
+                  AI Video
                 </button>
-                {camera.earthCamUrl ? (
+                {camera.earthCamUrl && (
                   <button
                     onClick={() => setViewMode('embed')}
-                    className={`px-3 py-2 rounded text-xs font-mono font-semibold transition-colors border text-center ${
+                    className={`px-2 py-2 rounded text-xs font-mono font-semibold transition-colors border text-center ${
                       viewMode === 'embed'
                         ? 'bg-[#00E5FF] text-[#0A0E1A] border-[#00E5FF]'
                         : 'bg-[#111827] text-cyan-300 border-[#1E3A5F] hover:border-[#00E5FF]'
                     }`}
                   >
-                    EarthCam Embed
-                  </button>
-                ) : (
-                  <button
-                    disabled
-                    className="px-3 py-2 rounded text-xs font-mono bg-[#111827] text-[#475569] border-[#1E293B] cursor-not-allowed text-center"
-                  >
-                    Direct RTSP
+                    Web Portal
                   </button>
                 )}
               </div>
